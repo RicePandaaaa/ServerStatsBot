@@ -5,7 +5,7 @@ from discord.ext import commands
 import sqlite3
 from datetime import datetime
 
-class CollectStats(commands.cog):
+class CollectStats(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -40,12 +40,14 @@ class CollectStats(commands.cog):
 
             # Update rows
             for hour in range(1, hour_difference + 1):
-                self.cur.execute(f"INSERT into total_members_daily ({self.last_used_hour + hour}, {0})")
+                self.cur.execute(f"INSERT into total_members_daily values ({self.last_used_hour + hour}, {0})")
             self.con.commit()
             self.tracker_hour += hour_difference
 
         member_count = self.cur.execute(f"SELECT members FROM total_members_daily WHERE hour = {self.tracker_hour}")
         member_count = member_count.fetchall()
+
+        print(member_count)
 
         self.cur.execute(f"UPDATE total_members_daily SET members = {member_count + 1} WHERE hour = {self.tracker_hour}")
         self.con.commit()

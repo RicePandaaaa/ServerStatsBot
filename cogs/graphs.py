@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-class Graphs(commands.cog):
+class Graphs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
