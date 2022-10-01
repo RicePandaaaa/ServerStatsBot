@@ -9,15 +9,17 @@ class CollectStats(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        # Establish connection to the database
         self.db_file = "stats.db"
         self.con = sqlite3.connect(self.db_file)
         self.cur = self.con.cursor()
 
+        # Set counter variables
         self.last_used_day = datetime.now().day
-        self.tracker_day = 1
+        self.tracker_day = datetime.now().day
 
         self.last_used_hour = datetime.now().hour
-        self.tracker_hour = 1
+        self.tracker_hour = datetime.now().hour
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
@@ -44,11 +46,11 @@ class CollectStats(commands.Cog):
             self.con.commit()
             self.tracker_hour += hour_difference
 
+        # Grab current member count
         member_count = self.cur.execute(f"SELECT members FROM total_members_daily WHERE hour = {self.tracker_hour}")
-        member_count = member_count.fetchall()
+        member_count = member_count.fetchall()[0][0]
 
-        print(member_count)
-
+        # Update member count
         self.cur.execute(f"UPDATE total_members_daily SET members = {member_count + 1} WHERE hour = {self.tracker_hour}")
         self.con.commit()
 
